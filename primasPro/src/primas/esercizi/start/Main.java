@@ -1,4 +1,4 @@
-package primasPro.start;
+package primas.esercizi.start;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import primasPro.start.model.SESSO;
-import primasPro.start.model.Studente;
-import primasPro.start.model.TN;
+import primas.esercizi.model.SESSO;
+import primas.esercizi.model.Studente;
+import primas.esercizi.model.TN;
 
 public class Main {
 

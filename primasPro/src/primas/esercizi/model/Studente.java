@@ -1,4 +1,4 @@
-package primasPro.start.model;
+package primas.esercizi.model;
 
 import java.util.Objects;
 

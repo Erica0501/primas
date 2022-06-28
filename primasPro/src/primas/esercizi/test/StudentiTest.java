@@ -1,4 +1,4 @@
-package primasPro;
+package primas.esercizi.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,10 +10,10 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import primasPro.start.Main;
-import primasPro.start.model.SESSO;
-import primasPro.start.model.Studente;
-import primasPro.start.model.TN;
+import primas.esercizi.model.SESSO;
+import primas.esercizi.model.Studente;
+import primas.esercizi.model.TN;
+import primas.esercizi.start.Main;
 
 class StudentiTest {
 	
