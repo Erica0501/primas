@@ -15,7 +15,7 @@ import primasPro.start.model.TN;
 public class Main {
 
 	public static void main(String[] args) {
-
+		// XXXXXXXX
 		List<Studente> studenti =  Arrays.asList(
 				new Studente("Erica","Brugnetti",18,SESSO.FEMMINA,TN.CENTRO),
 				new Studente("Daniele","Iovino",26,SESSO.MASCHIO,TN.CENTRO),
