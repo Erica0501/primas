@@ -73,7 +73,7 @@ public class Main {
 
 		mappa.put("under25", under25);
 		mappa.put("over25", over25);
-
+		
 		Predicate<Studente> targetU25 = mappa.get("under25");
 		Predicate<Studente> targetO25 = mappa.get("over25");
 
