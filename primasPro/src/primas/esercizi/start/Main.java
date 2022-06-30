@@ -39,8 +39,8 @@ public class Main {
 		System.out.println("percentuale femmine: "+percentualeFM(studenti, "Femmina")+"%");
 		System.out.println("percentuale maschi: "+percentualeFM(studenti, "Maschio")+"%");
 		
-		System.out.println("% femmine: "+ percentualeF(studenti));
-		System.out.println("% maschi: "+ percentualeM(studenti));
+//		System.out.println("% femmine: "+ percentualeF(studenti));
+//		System.out.println("% maschi: "+ percentualeM(studenti));
 
 		orderByCognome(studenti);
 		System.out.println("studenti ordinati per cognome: "+orderByCognome(studenti));
@@ -161,20 +161,20 @@ public class Main {
 	}
 	
 	// individuare percentuale femmine
-	public static long percentualeF (List<Studente> studenti) {
-
-		int totale = studenti.size();
-		long percentuale = studenti.stream().filter(s -> s.getSesso().equals(SESSO.FEMMINA)).count();
-
-		return percentuale * 100 / totale;
-	}
-	
-	// individuare percentuale maschi
-	public static long percentualeM (List<Studente> studenti) {
-
-		int totale = studenti.size();
-		long percentuale = studenti.stream().filter(s -> s.getSesso().equals(SESSO.MASCHIO)).count();
-
-		return percentuale * 100 / totale;
-	}
+//	public static long percentualeF (List<Studente> studenti) {
+//
+//		int totale = studenti.size();
+//		long percentuale = studenti.stream().filter(s -> s.getSesso().equals(SESSO.FEMMINA)).count();
+//
+//		return percentuale * 100 / totale;
+//	}
+//	
+//	// individuare percentuale maschi
+//	public static long percentualeM (List<Studente> studenti) {
+//
+//		int totale = studenti.size();
+//		long percentuale = studenti.stream().filter(s -> s.getSesso().equals(SESSO.MASCHIO)).count();
+//
+//		return percentuale * 100 / totale;
+//	}
 }
