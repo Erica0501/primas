@@ -7,7 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +30,8 @@ class StudentiTest {
 	@BeforeEach                                         
 	void setUp() {
 		
-		stu = Arrays.asList(new Studente("Erica","Brugnetti",18,SESSO.FEMMINA,TN.CENTRO),
+		stu = Arrays.asList(
+				new Studente("Erica","Brugnetti",18,SESSO.FEMMINA,TN.CENTRO),
 				new Studente("Daniele","Iovino",26,SESSO.MASCHIO,TN.CENTRO),
 				new Studente("Monica","Rossi",30,SESSO.FEMMINA,TN.NORD),
 				new Studente("Luca","Bianchi",21,SESSO.MASCHIO,TN.SUD),
@@ -63,6 +68,7 @@ class StudentiTest {
 	@Test
 	void testStudentiUO25() {
 
+		//TODO
 	}
 
 	@Test
@@ -76,7 +82,7 @@ class StudentiTest {
 	@Test
 	void testEtaMedia() {
 
-		assertEquals(29.0, Main.etaMedia(stu), "l'età media degli studenti dovrebbe essere 29.0");
+		assertEquals(29.0, Main.etaMedia(stu), "l'etï¿½ media degli studenti dovrebbe essere 29.0");
 
 	}
 
@@ -96,13 +102,11 @@ class StudentiTest {
 	@Test
 	void testPercentualeFM() {
 		
-		// stu
 		String genere = "FEMMINA";
 		String genere1 = "MASCHIO";
 		
 		assertEquals(30, Main.percentualeFM(stu, genere), "La percentuale delle femmine dovrebbe essere il 30% ");
 		assertEquals(70, Main.percentualeFM(stu, genere1), "La percentuale dei maschi dovrebbe essere il 70% ");
-//		assertEquals(3, Main.countDistribuzioneTN(stu, "sud"), "ci dovrebbero essere 3 studenti del sud");
 	}
 	
 
