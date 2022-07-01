@@ -29,12 +29,17 @@ public class Main {
 				new Studente("Mirko","Paolini",33,SESSO.MASCHIO,TN.SUD)
 				);
 
-		System.out.println("studenti < 25 anni: "+ countStudentiU25(studenti));
+		//System.out.println("studenti < 25 anni: "+ 
+		countStudentiU25(studenti);
+		//);
 
-		System.out.println("studenti < 25 anni e > 25: "+studentiUnderOver25(studenti));
+		//System.out.println("studenti < 25 anni e > 25: "+
+		studentiUnderOver25(studenti);
+		//);
 
+		//System.out.println("eta media: "+
 		etaMedia(studenti);
-		System.out.println("eta media: "+etaMedia(studenti));
+		//);
 
 		System.out.println("percentuale femmine: "+percentualeFM(studenti, "Femmina")+"%");
 		System.out.println("percentuale maschi: "+percentualeFM(studenti, "Maschio")+"%");
@@ -42,7 +47,6 @@ public class Main {
 //		System.out.println("% femmine: "+ percentualeF(studenti));
 //		System.out.println("% maschi: "+ percentualeM(studenti));
 
-		orderByCognome(studenti);
 		System.out.println("studenti ordinati per cognome: "+orderByCognome(studenti));
 		
 		System.out.println("distribuzione studenti su territorio nazionale: "+distribuzioneTN(studenti));

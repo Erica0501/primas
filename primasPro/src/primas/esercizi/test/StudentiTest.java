@@ -6,11 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +53,14 @@ class StudentiTest {
 //		stu.add(new Studente("Mirko","Paolini",33,SESSO.MASCHIO,TN.SUD));
 
 	}
+	
+	@Test
+	void testStudentiSize() {
 
+		assertEquals(10, stu.size(), "gli studenti dovrebbero essere 10");
+
+	}
+	
 	@Test
 	void testStudentiU25() {
 
@@ -68,6 +72,11 @@ class StudentiTest {
 	void testStudentiUO25() {
 
 		//TODO
+		Map<String, List<Studente>> ret = Main.studentiUnderOver25(stu);
+		
+		assertEquals(3, ret.get("under25").size());
+		assertEquals(7, ret.get("over25").size());
+		
 	}
 
 	@Test
@@ -77,11 +86,24 @@ class StudentiTest {
 		assertEquals(5, Main.countDistribuzioneTN(stu, "centro"), "ci dovrebbero essere 5 studenti del centro");
 		assertEquals(3, Main.countDistribuzioneTN(stu, "sud"), "ci dovrebbero essere 3 studenti del sud");
 	}
+	
+	@Test
+	void testDistribuzioneTN() {
+
+		
+		Map<String, List<Studente>> ret = Main.distribuzioneTN(stu);
+		
+		assertEquals(2, ret.get("nord").size());
+		assertEquals(5, ret.get("centro").size());
+		assertEquals(3, ret.get("sud").size());
+		
+	}
+
 
 	@Test
 	void testEtaMedia() {
 
-		assertEquals(29.0, Main.etaMedia(stu), "l'etï¿½ media degli studenti dovrebbe essere 29.0");
+		assertEquals(29.0, Main.etaMedia(stu), "l'età media degli studenti dovrebbe essere 29.0");
 
 	}
 
@@ -103,7 +125,6 @@ class StudentiTest {
 		
 		String genere = "FEMMINA";
 		String genere1 = "MASCHIO";
-		
 		
 		assertEquals(30, Main.percentualeFM(stu, genere), "La percentuale delle femmine dovrebbe essere il 30% ");
 		assertEquals(70, Main.percentualeFM(stu, genere1), "La percentuale dei maschi dovrebbe essere il 70% ");
