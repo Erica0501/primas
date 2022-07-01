@@ -5,26 +5,22 @@ import java.util.Objects;
 public class Studente {
 
 	private String nome;
-	
 	private String cognome;
-	
 	private int eta;
-	
 	private SESSO sesso;
-	
 	private TN tn;
 	
-	public Studente() {
-		super();
-	}
+	public Studente() {}
 
 	public Studente(String nome, String cognome, int eta, SESSO sesso, TN tn) {
+		
 		super();
 		this.nome = nome;
 		this.cognome = cognome;
 		this.eta = eta;
 		this.sesso = sesso;
 		this.tn = tn;
+		
 	}
 
 	public String getNome() {
