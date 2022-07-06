@@ -126,7 +126,7 @@ public class StudenteTest {
 		
 		assertEquals("La percentuale delle femmine dovrebbe essere il 27.27% ", "27,27", QueryStudenti.percentualeFM(stu, "FEMMINA"));
 		
-		assertEquals("La percentuale dei maschi dovrebbe essere il 72.72% ", "72,73", QueryStudenti.percentualeFM(stu, "MASCHIO"));
+		assertEquals("La percentuale dei maschi dovrebbe essere il 72.73% ", "72,73", QueryStudenti.percentualeFM(stu, "MASCHIO"));
 		
 	}
 	
