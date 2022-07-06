@@ -1,4 +1,4 @@
-package primas.esercizi.model;
+package primas.esercizio;
 
 import java.util.Objects;
 
@@ -7,20 +7,15 @@ public class Studente {
 	private String nome;
 	private String cognome;
 	private int eta;
-	private SESSO sesso;
-	private TN tn;
+	private Sesso sesso;
+	private ParteTerritorioItaliano parteTerritorioItaliano;
 	
-	public Studente() {}
-
-	public Studente(String nome, String cognome, int eta, SESSO sesso, TN tn) {
-		
-		super();
+	public Studente(String nome, String cognome, int eta, Sesso sesso, ParteTerritorioItaliano parteTerritorioItaliano) {
 		this.nome = nome;
 		this.cognome = cognome;
 		this.eta = eta;
 		this.sesso = sesso;
-		this.tn = tn;
-		
+		this.parteTerritorioItaliano = parteTerritorioItaliano;
 	}
 
 	public String getNome() {
@@ -47,30 +42,30 @@ public class Studente {
 		this.eta = eta;
 	}
 
-	public SESSO getSesso() {
+	public Sesso getSesso() {
 		return sesso;
 	}
 
-	public void setSesso(SESSO sesso) {
+	public void setSesso(Sesso sesso) {
 		this.sesso = sesso;
 	}
 
-	public TN getTn() {
-		return tn;
+	public ParteTerritorioItaliano getParteTerritorioItaliano() {
+		return parteTerritorioItaliano;
 	}
 
-	public void setTn(TN tn) {
-		this.tn = tn;
+	public void setParteTerritorioItaliano(ParteTerritorioItaliano parteTerritorioItaliano) {
+		this.parteTerritorioItaliano = parteTerritorioItaliano;
 	}
 
 	@Override
 	public String toString() {
-		return "nome=" + nome + ", cognome=" + cognome + ", eta=" + eta + ", sesso=" + sesso + ", tn=" + tn;
+		return nome + " " + cognome + ", eta=" + eta + ", sesso=" + sesso + ", viene dal " + parteTerritorioItaliano;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cognome, eta, nome, sesso, tn);
+		return Objects.hash(cognome, eta, nome, sesso, parteTerritorioItaliano);
 	}
 
 	@Override
@@ -83,6 +78,6 @@ public class Studente {
 			return false;
 		Studente other = (Studente) obj;
 		return Objects.equals(cognome, other.cognome) && eta == other.eta && Objects.equals(nome, other.nome)
-				&& sesso == other.sesso && tn == other.tn;
+				&& sesso == other.sesso && parteTerritorioItaliano == other.parteTerritorioItaliano;
 	}
 }

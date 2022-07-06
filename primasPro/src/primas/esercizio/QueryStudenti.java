@@ -1,6 +1,7 @@
-package primas.esercizi.start;
+package primas.esercizio;
 
-import java.util.Arrays;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -8,49 +9,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import primas.esercizi.model.SESSO;
-import primas.esercizi.model.Studente;
-import primas.esercizi.model.TN;
-
-public class Main {
-
-	public static void main(String[] args) {
-		
-		List<Studente> studenti =  Arrays.asList(
-				new Studente("Erica","Brugnetti",18,SESSO.FEMMINA,TN.CENTRO),
-				new Studente("Daniele","Iovino",26,SESSO.MASCHIO,TN.CENTRO),
-				new Studente("Monica","Rossi",30,SESSO.FEMMINA,TN.NORD),
-				new Studente("Luca","Bianchi",21,SESSO.MASCHIO,TN.SUD),
-				new Studente("Marco","Piccioni",35,SESSO.MASCHIO,TN.SUD),
-				new Studente("Dario","Mari",45,SESSO.MASCHIO,TN.CENTRO),
-				new Studente("Luigi","Fagiolo",29,SESSO.MASCHIO,TN.CENTRO),
-				new Studente("Maria","Verdi",19,SESSO.FEMMINA,TN.NORD),
-				new Studente("Edoardo","Lolli",34,SESSO.MASCHIO,TN.CENTRO),
-				new Studente("Mirko","Paolini",33,SESSO.MASCHIO,TN.SUD)
-				);
-
-		countStudentiU25(studenti);
-
-		studentiUnderOver25(studenti);
-
-		etaMedia(studenti);
-
-		percentualeFM(studenti, "Femmina");
-		
-		percentualeFM(studenti, "Maschio");
-
-		orderByCognome(studenti);
-		
-		distribuzioneTN(studenti);
-		
-		countDistribuzioneTN(studenti, "nord");
-		
-		countDistribuzioneTN(studenti, "centro");
-		
-		countDistribuzioneTN(studenti, "sud");
-
-	}
-	
+public class QueryStudenti {
 	
 	// ** calcolare quanti studenti hanno meno di 25 anni
 	public static long countStudentiU25(List<Studente> studenti) {
@@ -69,22 +28,22 @@ public class Main {
 
 		Map<String, Predicate<Studente>> mappa = new HashMap<>(); 
 
-		Predicate<Studente> under25 = s -> s.getEta() < 25;
-		Predicate<Studente> over25 = s -> s.getEta() >= 25;
+		Predicate<Studente> minori25Anni = s -> s.getEta() < 25;
+		Predicate<Studente> maggioriUguali25Anni = s -> s.getEta() >= 25;
 
-		mappa.put("under25", under25);
-		mappa.put("over25", over25);
+		mappa.put("minori25Anni", minori25Anni);
+		mappa.put("maggioriUguali25Anni", maggioriUguali25Anni);
 		
-		Predicate<Studente> targetU25 = mappa.get("under25");
-		Predicate<Studente> targetO25 = mappa.get("over25");
+		Predicate<Studente> targetU25 = mappa.get("minori25Anni");
+		Predicate<Studente> targetO25 = mappa.get("maggioriUguali25Anni");
 
 		Map<String, List<Studente>> ret = new HashMap<>(); 
 		
-		ret.put("under25", studenti
+		ret.put("minori25Anni", studenti
 				.stream()
 				.filter(s -> targetU25.test(s))
 				.collect(Collectors.toList()));
-		ret.put("over25", studenti
+		ret.put("maggioriUguali25Anni", studenti
 				.stream()
 				.filter(s -> targetO25.test(s))
 				.collect(Collectors.toList()));
@@ -94,13 +53,13 @@ public class Main {
 	}
 	
 	// ** individuare distribuzione studenti sul territorio nazionale
-	public static Map<String, List<Studente>> distribuzioneTN (List<Studente> studenti) {
+	public static Map<String, List<Studente>> distribuzioneTerritorioItaliano (List<Studente> studenti) {
 
 		Map<String, Predicate<Studente>> mappa = new HashMap<>(); 
 
-		Predicate<Studente> nord = s -> s.getTn().equals(TN.NORD);
-		Predicate<Studente> centro = s -> s.getTn().equals(TN.CENTRO);
-		Predicate<Studente> sud = s -> s.getTn().equals(TN.SUD);
+		Predicate<Studente> nord = s -> s.getParteTerritorioItaliano().equals(ParteTerritorioItaliano.NORD);
+		Predicate<Studente> centro = s -> s.getParteTerritorioItaliano().equals(ParteTerritorioItaliano.CENTRO);
+		Predicate<Studente> sud = s -> s.getParteTerritorioItaliano().equals(ParteTerritorioItaliano.SUD);
 
 		mappa.put("nord", nord);
 		mappa.put("centro", centro);
@@ -128,36 +87,38 @@ public class Main {
 	}
 	
 	// ** individuare distribuzione studenti sul territorio nazionale Sol.2
-	public static long countDistribuzioneTN (List<Studente> studenti, String tn) {
+	public static long countDistribuzioneTerritorioItaliano (List<Studente> studenti, String tn) {
 
 		long count;
 
 		if (tn.equalsIgnoreCase("NORD")) {
 			count = studenti
 					.stream()
-					.filter(s -> s.getTn().equals(TN.NORD)).count();
+					.filter(s -> s.getParteTerritorioItaliano().equals(ParteTerritorioItaliano.NORD)).count();
 		} else if (tn.equalsIgnoreCase("CENTRO")) {
 			count = studenti
 					.stream()
-					.filter(s -> s.getTn().equals(TN.CENTRO)).count();
+					.filter(s -> s.getParteTerritorioItaliano().equals(ParteTerritorioItaliano.CENTRO)).count();
 		} else {
 			count = studenti
 					.stream()
-					.filter(s -> s.getTn().equals(TN.SUD)).count();
+					.filter(s -> s.getParteTerritorioItaliano().equals(ParteTerritorioItaliano.SUD)).count();
 		}
 
 		return count;
 		
 	}
 
-	// **calcolare età media
-	public static double etaMedia (List<Studente> studenti) {
+	// **calcolare eta media
+	public static String etaMedia (List<Studente> studenti) {
 
 		Double etaMedia = studenti
 				.stream()
 				.collect(Collectors.averagingInt(Studente::getEta));
 		
-		return etaMedia;
+		NumberFormat formatter = new DecimalFormat("#0.00");  
+		
+		return formatter.format(etaMedia);
 		
 	}
 	
@@ -172,24 +133,27 @@ public class Main {
 	}
 	
 	// ** individuare percentuale studenti maschi e femmine
-	public static Long percentualeFM (List<Studente> studenti, String genere) {
+	public static String percentualeFM (List<Studente> studenti, String genere) {
 
 		int totale = studenti.size();
-		long percentuale;
+		Long percentuale;
 
 		if (genere.equalsIgnoreCase("FEMMINA")) {
 			percentuale = studenti
 						 .stream()
-						 .filter(s -> s.getSesso().equals(SESSO.FEMMINA))
+						 .filter(s -> s.getSesso().equals(Sesso.FEMMINA))
 						 .count();
 		} else {
 			percentuale = studenti
 						 .stream()
-						 .filter(s -> s.getSesso().equals(SESSO.MASCHIO))
+						 .filter(s -> s.getSesso().equals(Sesso.MASCHIO))
 						 .count();
 		}
+		
+		NumberFormat formatter = new DecimalFormat("#0.00");    
+		double ret = percentuale.doubleValue() * 100 / totale;
 
-		return percentuale * 100 / totale;
+		return formatter.format(ret);
 
 	}
 
