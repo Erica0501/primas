@@ -1,0 +1,1 @@
+# Esercizio sulle Java Lambda
