@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class StudenteTest {
 
-	List<Studente> stu;
+	private List<Studente> stu;
 
 	@Before                                        
 	public void setUp() {
