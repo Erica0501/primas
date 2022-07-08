@@ -103,7 +103,7 @@ public class StudenteTest {
 	@Test
 	public void testEtaMedia() {
 
-		assertEquals("L'eta' media degli studenti dovrebbe essere 28,64", QueryStudenti.etaMedia(stu), "28,64");
+		assertEquals("L'eta' media degli studenti dovrebbe essere 28.64", QueryStudenti.etaMedia(stu), "28.64");
 
 	}
 
@@ -124,9 +124,9 @@ public class StudenteTest {
 	public void testPercentualeFM() {
 		
 		
-		assertEquals("La percentuale delle femmine dovrebbe essere il 27.27% ", "27,27", QueryStudenti.percentualeFM(stu, "FEMMINA"));
+		assertEquals("La percentuale delle femmine dovrebbe essere il 27.27% ", "27.27", QueryStudenti.percentualeFM(stu, "FEMMINA"));
 		
-		assertEquals("La percentuale dei maschi dovrebbe essere il 72.73% ", "72,73", QueryStudenti.percentualeFM(stu, "MASCHIO"));
+		assertEquals("La percentuale dei maschi dovrebbe essere il 72.73% ", "72.73", QueryStudenti.percentualeFM(stu, "MASCHIO"));
 		
 	}
 	
