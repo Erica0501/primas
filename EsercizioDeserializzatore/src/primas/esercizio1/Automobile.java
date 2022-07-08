@@ -8,7 +8,11 @@ public class Automobile {
 	@JSONSerialField								
 	private String modello;						
 	
-	private int anno;						
+	private int anno;			
+
+	public Automobile() {
+		super();
+	}
 
 	public Automobile(String marca, String modello, int anno) {	
 		this.marca = marca;						
@@ -35,7 +39,17 @@ public class Automobile {
 	}
 
 
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
 
+	public void setModello(String modello) {
+		this.modello = modello;
+	}
+
+	public void setAnno(int anno) {
+		this.anno = anno;
+	}
 
 	@Override
 	public String toString() {	
