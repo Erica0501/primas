@@ -1,14 +1,11 @@
 package primas.esercizio1;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static java.lang.Integer.parseInt;
 
 public class JSONSimpleSerializer {
+
 
 	/*First level */
 	HashMap<String,Object> nestedObjects1 = new HashMap<>();
@@ -16,7 +13,7 @@ public class JSONSimpleSerializer {
 	/*Second level */
 	HashMap<String,Object> nestedObjects2 = new HashMap<>();
 
-	public Object deserialize3(String jsonString, Class<?> unknowClass) {
+	public Object deserialize(String jsonString, Class<?> unknowClass) {
 		HashMap<String,Object> map = getObjFromJson(jsonString);
 
 		return map.get("automobile");
@@ -43,6 +40,10 @@ public class JSONSimpleSerializer {
 				System.out.println("setObjectToAttribute : "+mappedNestedAttributes);
 
 			}
+		}else{
+			HashMap<String, String> mappedObjAttrBase = deserializeAttributes(jsonModified);
+			mappedAttributesBase = setObjectToAttribute(mappedObjAttrBase,"automobile");
+			System.out.println("setObjectToAttribute : "+mappedAttributesBase);
 		}
 
 		if(nestedObjname!=null){
@@ -58,8 +59,10 @@ public class JSONSimpleSerializer {
 		}
 
 		Automobile automobile = (Automobile) mappedAttributesBase.get("automobile");
-		Assicurazione assicurazione = (Assicurazione) mappedNestedAttributes.get(nestedObjname);
-		automobile.setAssicurazione(assicurazione);
+		if (nestedObjname!=null) {
+			Assicurazione assicurazione = (Assicurazione) mappedNestedAttributes.get(nestedObjname);
+			automobile.setAssicurazione(assicurazione);
+		}
 		return mappedAttributesBase;
 	}
 
@@ -78,11 +81,11 @@ public class JSONSimpleSerializer {
 		return null;
 	}
 
-	private HashMap<String, Object> setObjectToAttribute(HashMap<String, String> mappedNestedObjAttr, String nestedObjname) {
+	private HashMap<String, Object> setObjectToAttribute(HashMap<String, String> mappedObjAttr, String nestedObjname) {
 		HashMap<String, Object> objNest = new HashMap<>();
 		Assicurazione assicurazione = new Assicurazione();
 		Automobile automobile = new Automobile();
-		for (Map.Entry<String, String> set : mappedNestedObjAttr.entrySet()) {
+		for (Map.Entry<String, String> set : mappedObjAttr.entrySet()) {
 			System.out.println(set.getKey() + " = " + set.getValue());
 
 			if(set.getKey().equals("inizioContratto")){
@@ -147,7 +150,7 @@ public class JSONSimpleSerializer {
 
 		for (String s : jsonStringSplit) {
 			List<String> listaSplit = Arrays.asList(s.split(":"));
-			jsonMap.put(listaSplit.get(0), listaSplit.get(1));
+			jsonMap.put(listaSplit.get(0).trim(), listaSplit.get(1).trim());
 		}
 		return jsonMap;
 

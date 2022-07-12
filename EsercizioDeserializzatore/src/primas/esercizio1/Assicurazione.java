@@ -5,19 +5,13 @@ import java.util.Objects;
 
 public class Assicurazione {
 
-    private Date inizioContratto;
+        private Date inizioContratto;
 
-    private Date scadenzaContratto;
+        private Date scadenzaContratto;
 
-    //private Persona contraente;
+        //private Persona contraente;
 
-    public Assicurazione() {}
-
-    public Assicurazione(Date inizioContratto, Date scadenzaContratto) {
-        super();
-        this.inizioContratto = inizioContratto;
-        this.scadenzaContratto = scadenzaContratto;
-    }
+        public Assicurazione() {}
 
     public Date getInizioContratto() {
         return inizioContratto;
@@ -36,11 +30,11 @@ public class Assicurazione {
     }
 
     @Override
-    public String toString() {
-        return "Assicurazione{" +
-                "inizioContratto=" + inizioContratto +
-                ", scadenzaContratto=" + scadenzaContratto +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Assicurazione that = (Assicurazione) o;
+        return Objects.equals(inizioContratto, that.inizioContratto) && Objects.equals(scadenzaContratto, that.scadenzaContratto);
     }
 
     @Override
@@ -49,15 +43,10 @@ public class Assicurazione {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Assicurazione other = (Assicurazione) obj;
-        return Objects.equals(inizioContratto, other.inizioContratto)
-                && Objects.equals(scadenzaContratto, other.scadenzaContratto);
+    public String toString() {
+        return "Assicurazione{" +
+                "inizioContratto=" + inizioContratto +
+                ", scadenzaContratto=" + scadenzaContratto +
+                '}';
     }
 }

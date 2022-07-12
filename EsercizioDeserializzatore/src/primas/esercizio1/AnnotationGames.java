@@ -15,7 +15,7 @@ public class AnnotationGames {
 
 				"{\"marca\":\"BMW\",\"modello\":\"955e\",\"anno\":\"2025\",\"assicurazione\":{\"inizioContratto\":\"08-07-2022\",\"scadenzaContratto\":\"08-01-2023\"}}";
 
-		Automobile auto3 = (Automobile) my_serializer.deserialize3(jsonString, Automobile.class);
+		Automobile auto3 = (Automobile) my_serializer.deserialize(jsonString, Automobile.class);
 		System.out.println("Auto deserializzata: " + auto3);
 		
 	}
