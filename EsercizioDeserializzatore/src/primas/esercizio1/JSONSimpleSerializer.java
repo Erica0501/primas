@@ -10,106 +10,148 @@ import java.util.Map;
 
 public class JSONSimpleSerializer {
 
-	public void serialize (Object obj) throws IllegalArgumentException, IllegalAccessException {
-		StringBuilder jsonString = new StringBuilder("{\n");
-		//check if fields have annotation
-		Class<?> classObj = obj.getClass();
-		Field[] attributes = classObj.getDeclaredFields();
-		System.out.println("Num attributi: " + attributes.length);
-		//serialize
-		for (int i = 0; i < attributes.length; i++) {
-			if(attributes[i].getAnnotation(JSONSerialField.class) != null) {
-						System.out.println(attributes[i].getType());
-						System.out.println("Sto serializzando l'attributo " 
-								+ attributes[i].getName());
-				jsonString.append("\t");
-				jsonString.append("\"");
-				jsonString.append(attributes[i].getName());
-				jsonString.append("\"");
-				jsonString.append(":");
-				//fix accessibility to private attributes
-				attributes[i].setAccessible(true);
-				jsonString.append("\"");
-				jsonString.append(attributes[i].get(obj));
-				jsonString.append("\"");
-				if (i < attributes.length - 2) {
-					jsonString.append(",");
-				}
-				jsonString.append("\n");
-			} else {
-				System.out.println("Ho omesso di serializzare l'attributo "
-						+ attributes[i].getName());
+	/*First level */
+	HashMap<String,Object> nestedObjects1 = new HashMap<>();
+
+	/*Second level */
+	HashMap<String,Object> nestedObjects2 = new HashMap<>();
+
+	public Object deserialize3(String jsonString, Class<?> unknowClass) {
+		HashMap<String,Object> map = getObjFromJson(jsonString);
+
+		return map.get("automobile");
+
+	}
+
+	private HashMap<String, Object> getObjFromJson(String json){
+
+		System.out.println("json : "+json);
+
+		HashMap<String, Object> mappedAttributesBase = null;
+		HashMap<String, Object> mappedNestedAttributes = null;
+		String nestedObjname = null;
+		/* togli le graffe */
+		String jsonModified = json.substring(1, json.length()-1);
+
+		if (isPresentNestedObj(jsonModified)) {
+			nestedObjname = findNestedObjName(jsonModified);
+			if (nestedObjname != null) {
+				/* prendi soltanto gli attributi dell'oggetto annidato, senza le sue graffe */
+				String nestedObjAttributes = jsonModified.substring(jsonModified.lastIndexOf(nestedObjname)+nestedObjname.length()+2, jsonModified.length()-1);
+				HashMap<String, String> mappedNestedObjAttr = deserializeAttributes(nestedObjAttributes);
+				mappedNestedAttributes = setObjectToAttribute(mappedNestedObjAttr,nestedObjname);
+				System.out.println("setObjectToAttribute : "+mappedNestedAttributes);
+
 			}
 		}
-		jsonString.append("}");
-		System.out.println(/*"Stringa serializzata:\n " +*/ jsonString);
+
+		if(nestedObjname!=null){
+			System.out.println("jsonModified : "+jsonModified);
+			jsonModified = getOnlyObjAttributesBase(jsonModified,new ArrayList<>(List.of(nestedObjname)));
+			HashMap<String, String> mappedObjAttrBase = deserializeAttributes(jsonModified);
+			mappedAttributesBase = setObjectToAttribute(mappedObjAttrBase,"automobile");
+			System.out.println("setObjectToAttribute : "+mappedAttributesBase);
+		}else{
+			if (!isPresentNestedObj(jsonModified)){
+				//TODO
+			}
+		}
+
+		Automobile automobile = (Automobile) mappedAttributesBase.get("automobile");
+		Assicurazione assicurazione = (Assicurazione) mappedNestedAttributes.get(nestedObjname);
+		automobile.setAssicurazione(assicurazione);
+		return mappedAttributesBase;
 	}
 
-	/*
-	 * un json inizia con {
-	 * finisce con }
-	 * ogni campo è separato da virgola
-	 * ogni campo è chiave-valore dove la chiave è sempre racchiusa tra " e finisce con :
-	 * il valore può essere primitivo, String o object
-	 * nel caso di object dopo i due punti ci sarà una {
-	 * nel caso di array dopo i due punti ci sarà una [
-	 */
-	public Automobile deserialize(String jsonString, Class<Automobile> class1) {
+	private String getOnlyObjAttributesBase(String jsonModified, ArrayList<String> attributesNestedObjects) {
 
-		// elimino le graffe dal json
-		String newJson = jsonString.substring(1, jsonString.length()-1);
-
-		List<String> fields = Arrays.asList(newJson.split(","));
-		Map<String, String> objMap = new HashMap<String, String>();
-
-		Automobile auto = new Automobile();
-
-		for(int i = 0; i< fields.size(); i++) {
-
-			String [] keyVal = fields.get(i).split(":"); 
-			String key = keyVal[0].replace("\"", "").trim();
-			String value = keyVal[1].replace("\"", "").trim();
-
-			objMap.put(key, value);
-
+		/* Ã¨ presente l'attributo dell'oggetto annidato,e termina per caso con la '}' e
+		 abbiamo soltanto un oggetto annidato e contiene la parola chiave dell'annidato */
+		if(isPresentNestedObj(jsonModified) && jsonModified.endsWith("}") &&
+				attributesNestedObjects.size() == 1 && jsonModified.contains(attributesNestedObjects.get(0))){
+			System.out.println("l'ultimo carattere della stringa Ã¨ '}'");
+			System.out.println("la parola " + attributesNestedObjects.get(0) +" Ã¨ alla posizione : "+jsonModified.indexOf(attributesNestedObjects.get(0)));
+			/*			System.out.println(jsonModified.substring(0,jsonModified.indexOf(attributesNestedObjects.get(0))));*/
+			return jsonModified.substring(0,jsonModified.indexOf(attributesNestedObjects.get(0)));
 		}
 
-		if (objMap.containsKey("anno")) {
-			auto.setAnno(Integer.valueOf((objMap.get("anno"))));
-		}
-
-		if (objMap.containsKey("marca")) {
-			auto.setMarca(objMap.get("marca"));
-		}
-
-		if (objMap.containsKey("modello")) {
-			auto.setModello(objMap.get("modello"));
-		}
-
-		return auto;
-
+		return null;
 	}
 
-//	public Automobile met(String jsonString) throws IOException, ClassNotFoundException {
-//		
-//		Automobile auto = new Automobile();
-//		
-//		FileInputStream fis = new FileInputStream(jsonString);
-//		ObjectInputStream ois = new ObjectInputStream(fis);
-//
-//		int anno = ois.readInt();
-//		String marca = (String) ois.readObject();
-//		String modello = (String) ois.readObject();
-//	
-//		ois.close();
-//		
-//		auto.setAnno(anno);
-//		auto.setMarca(marca);
-//		auto.setModello(modello);
-//		
-//		return auto;
-//	}
-	
+	private HashMap<String, Object> setObjectToAttribute(HashMap<String, String> mappedNestedObjAttr, String nestedObjname) {
+		HashMap<String, Object> objNest = new HashMap<>();
+		Assicurazione assicurazione = new Assicurazione();
+		Automobile automobile = new Automobile();
+		for (Map.Entry<String, String> set : mappedNestedObjAttr.entrySet()) {
+			System.out.println(set.getKey() + " = " + set.getValue());
+
+			if(set.getKey().equals("inizioContratto")){
+				assicurazione.setInizioContratto(formatFromStringToDate(set.getValue()));
+			}
+			if(set.getKey().equals("scadenzaContratto")){
+				assicurazione.setScadenzaContratto(formatFromStringToDate(set.getValue()));
+			}
+
+			if(set.getKey().equals("marca")){
+				automobile.setMarca(set.getValue());
+			}
+
+			if(set.getKey().equals("anno")){
+				automobile.setAnno(parseInt(set.getValue()));
+			}
+
+			if(set.getKey().equals("modello")){
+				automobile.setModello(set.getValue());
+			}
+		}
+		if(nestedObjname.equals("\"assicurazione\"")) {
+			objNest.put(nestedObjname, assicurazione);
+		}else if(nestedObjname.equals("automobile")){
+			objNest.put(nestedObjname, automobile);
+		}
+		return objNest;
+	}
+
+
+
+	private Date formatFromStringToDate(String dateString){
+		String[] splitDate = dateString.split("-");
+		Date dt = new GregorianCalendar(Integer.valueOf(splitDate[2]), Integer.valueOf(splitDate[1])-1, Integer.valueOf(splitDate[0])).getTime();
+		return dt;
+	}
+
+	private String findNestedObjName (String jsonString) {
+
+		List<String> fields = Arrays.asList(jsonString.split(","));
+
+		for (int i=0; i<fields.size(); i++) {
+			if (fields.get(i).contains("{") ) {
+				String [] keyVal = fields.get(i).split(":");
+				return keyVal[0];
+			}
+		}
+
+		return null;
+	}
+
+	private boolean isPresentNestedObj (String subActualLevel) {
+		return subActualLevel.contains("{") && subActualLevel.contains("}");
+	}
+
+	public HashMap<String, String> deserializeAttributes(String jsonString) {
+
+		HashMap<String, String> jsonMap = new HashMap<>();
+		jsonString = jsonString.replace("\"","").trim();
+
+		List<String> jsonStringSplit = Arrays.asList(jsonString.split(","));
+
+		for (String s : jsonStringSplit) {
+			List<String> listaSplit = Arrays.asList(s.split(":"));
+			jsonMap.put(listaSplit.get(0), listaSplit.get(1));
+		}
+		return jsonMap;
+
+	}
 	
 }
-
+
