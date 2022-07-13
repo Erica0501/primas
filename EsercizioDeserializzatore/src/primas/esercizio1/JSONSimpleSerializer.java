@@ -46,12 +46,50 @@ public class JSONSimpleSerializer {
 		jsonString.append("}");
 		System.out.println(/*"Stringa serializzata:\n " +*/ jsonString);
 	}
+	// elimino le graffe all'inizio e alla fine
+	public String eliminaGraffe(String jsonString) {
+		System.out.println("ppppppppppppppppp" + jsonString);
+		if(jsonString.startsWith("{") && jsonString.endsWith("}")) {
+			return jsonString.substring(1, jsonString.length() - 1);
+		} 
+			return null;
+		
+	}
+	
+	public String valoreOggettoAnnidato(String jsonString, String nomeOggAnnidato) {
+		
+		// String s = subActualLevel.substring(subActualLevel.lastIndexOf(nestedObj) + nestedObj.length() + 2,
+		//		subActualLevel.lastIndexOf("}")).replace("\"", "");
+		return eliminaGraffe(jsonString.substring(jsonString.lastIndexOf(nomeOggAnnidato) + nomeOggAnnidato.length() + 1, jsonString.lastIndexOf("}") + 1).replace("\"", ""));
+	
+	}
+	
+	public void setValoriAssicurazione(String newJson, Assicurazione assic) {
+		// TODO aggiungere controllo
+		String[] arrayKV = newJson.split(",");
+		System.out.println(arrayKV[0].substring(arrayKV[0].lastIndexOf(":") + 1, arrayKV[0].length()));
+		assic.setInizioContratto(null);
+	}
+	
+	public Date convertiTipoData(String data) {
+		
+	//	Date dataInizioContratto = new GregorianCalendar(Integer.valueOf(data[2]), Integer.valueOf(splitDateInizio[1])-1, Integer.valueOf(splitDateInizio[0])).getTime();
+		return null;
+	}
 
 	public Automobile deserialize(String jsonString, Class<Automobile> class1) throws ParseException {
 
 		// elimino le graffe dal json
-		String newJson = jsonString.substring(1, jsonString.length() - 1);
+		String newJson = eliminaGraffe(jsonString);
 		Automobile auto = new Automobile();
+		Assicurazione assi = new Assicurazione();
+		
+		String nomeOggAnnidato = null;
+		if(contieneOggettoAnnidato(newJson)) {
+			nomeOggAnnidato = cercaNomeOggettoAnnidato(newJson);
+			String valoreOggAnnidato = valoreOggettoAnnidato(newJson, nomeOggAnnidato);
+			setValoriAssicurazione(valoreOggAnnidato, assi);
+		}
 		
 		List<String> fields = Arrays.asList(newJson.split(":"));
 
@@ -77,13 +115,13 @@ public class JSONSimpleSerializer {
 		
 		String subActualLevel = jsonString.substring(1, jsonString.length() - 1);
 		System.out.println("sub " + subActualLevel);
-		String nestedObj = findNestedObjName(subActualLevel, class1);
+		String nestedObj = cercaNomeOggettoAnnidato(subActualLevel);
 		
 		String arrayObj = findArrayObjName(jsonString, class1);
 		
 		System.out.println("nest" + nestedObj);
 
-		if (isPresentNestedObj(subActualLevel)) {
+		if (contieneOggettoAnnidato(subActualLevel)) {
 			String s = subActualLevel.substring(subActualLevel.lastIndexOf(nestedObj) + nestedObj.length() + 2,
 					subActualLevel.lastIndexOf("}")).replace("\"", "");
 			System.out.println("s " + s);
@@ -138,7 +176,7 @@ public class JSONSimpleSerializer {
 
 	}
 
-	private boolean isPresentNestedObj(String subActualLevel) {
+	private boolean contieneOggettoAnnidato(String subActualLevel) {
 
 		return subActualLevel.contains("{") && subActualLevel.contains("}");
 
@@ -150,17 +188,14 @@ public class JSONSimpleSerializer {
 
 	}
 
-	private String findNestedObjName(String jsonString, Class<?> clazz) {
+	private String cercaNomeOggettoAnnidato(String jsonString) {
 
 		List<String> fields = Arrays.asList(jsonString.split(","));
 
 		for (int i = 0; i < fields.size(); i++) {
 			if (fields.get(i).contains("{")) {
 				String[] keyVal = fields.get(i).split(":");
-				System.out.println("//////////" + (keyVal[0]));
-				System.out.println("//////////" + (keyVal[1]));
-				//				System.out.println("//////////"+(keyVal[1].replace("{", "")));
-				//
+				
 				return keyVal[0];
 			}
 		}
