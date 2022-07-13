@@ -1,5 +1,6 @@
 package primas.esercizio1;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Automobile {
@@ -13,16 +14,19 @@ public class Automobile {
 	private int anno;	
 	
 	private Assicurazione assicurazione;
+	
+	private String [] allestimento;
 
 	public Automobile() {
 		super();
 	}
 	
-	public Automobile(String marca, String modello, int anno, Assicurazione assicurazione) {	
+	public Automobile(String marca, String modello, int anno, Assicurazione assicurazione, String [] allestimento) {	
 		this.marca = marca;						
 		this.modello = modello;								
 		this.anno = anno;
 		this.assicurazione = assicurazione;
+		this.allestimento = allestimento;
 	}
 	 
 	public Automobile(String marca, String modello, int anno) {	
@@ -63,14 +67,21 @@ public class Automobile {
 		this.assicurazione = assicurazione;
 	}
 
-	@Override
-	public String toString() {	
-		return marca + " " + modello + " " + anno + " " + assicurazione + " ";
+	public String[] getAllestimento() {
+		return allestimento;
+	}
+
+	public void setAllestimento(String[] allestimento) {
+		this.allestimento = allestimento;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(anno, assicurazione, marca, modello);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(allestimento);
+		result = prime * result + Objects.hash(anno, assicurazione, marca, modello);
+		return result;
 	}
 
 	@Override
@@ -83,7 +94,14 @@ public class Automobile {
 			return false;
 		Automobile other = (Automobile) obj;
 		return anno == other.anno && Objects.equals(assicurazione, other.assicurazione)
-				&& Objects.equals(marca, other.marca) && Objects.equals(modello, other.modello);
+				&& Arrays.equals(allestimento, other.allestimento) && Objects.equals(marca, other.marca)
+				&& Objects.equals(modello, other.modello);
 	}
+
+	@Override
+	public String toString() {
+		return marca+ " "+  modello + " " + anno + " " + assicurazione + " " + "allestimento " + Arrays.toString(allestimento) + " ";
+	}
+	
 }
 

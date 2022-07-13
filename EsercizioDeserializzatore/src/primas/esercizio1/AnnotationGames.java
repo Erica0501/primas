@@ -18,7 +18,9 @@ public class AnnotationGames {
 				
 		//	"{\"marca\":\"BMW\",\"modello\":\"955e\",\"assicurazione\":{\"inizioContratto\":\"08-07-2022\",\"scadenzaContratto\":\"08-01-2023\"},\"anno\":\"2025\"}";
 				
-		"{\"assicurazione\":{\"inizioContratto\":\"08-07-2022\",\"scadenzaContratto\":\"08-01-2023\"},\"marca\":\"BMW\",\"modello\":\"955e\",\"anno\":\"2025\"}";		
+		//"{\"assicurazione\":{\"inizioContratto\":\"08-07-2022\",\"scadenzaContratto\":\"08-01-2023\"},\"marca\":\"BMW\",\"modello\":\"955e\",\"anno\":\"2025\"}";
+				
+		"{\"assicurazione\":{\"inizioContratto\":\"08-07-2022\",\"scadenzaContratto\":\"08-01-2023\"},\"marca\":\"BMW\",\"modello\":\"955e\",\"allestimento\":[\"base\",\"advantage\",\"Msport\",\"goldEdition\"],\"anno\":\"2025\"}";		
 				
 		Automobile auto3 = my_serializer.deserialize(jsonString, Automobile.class);
 		System.out.println("Auto deserializzata: " + auto3);

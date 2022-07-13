@@ -21,9 +21,9 @@ public class JSONSimpleSerializer {
 		//serialize
 		for (int i = 0; i < attributes.length; i++) {
 			if(attributes[i].getAnnotation(JSONSerialField.class) != null) {
-						System.out.println(attributes[i].getType());
-						System.out.println("Sto serializzando l'attributo " 
-								+ attributes[i].getName());
+				System.out.println(attributes[i].getType());
+				System.out.println("Sto serializzando l'attributo " 
+						+ attributes[i].getName());
 				jsonString.append("\t");
 				jsonString.append("\"");
 				jsonString.append(attributes[i].getName());
@@ -51,126 +51,170 @@ public class JSONSimpleSerializer {
 
 		// elimino le graffe dal json
 		String newJson = jsonString.substring(1, jsonString.length() - 1);
-
-		List<String> fields = Arrays.asList(newJson.split(","));
+		Automobile auto = new Automobile();
+		
+		List<String> fields = Arrays.asList(newJson.split(":"));
 
 		Map<String, String> objMap = new HashMap<String, String>();
-		System.out.println("fields " + fields);
-		Automobile auto = new Automobile();
-
-		for(int i = 0; i< fields.size(); i++) {
-
-			String [] keyVal = fields.get(i).split(":"); 
-			String key = keyVal[0].replace("\"", "").trim();
-			String value = keyVal[1].replace("\"", "").trim();
-
-			objMap.put(key, value);
-
+		System.out.println("fields " + fields );
+		
+		Field[] attributes = class1.getDeclaredFields();
+		for (int i = 0; i < attributes.length; i++) {
+				System.out.println("Sto serializzando l'attributo " 
+						+ attributes[i].getName());
 		}
-
-			String subActualLevel = jsonString.substring(1, jsonString.length() - 1);
-			System.out.println("sub " + subActualLevel);
-			String nestedObj = findNestedObjName(subActualLevel, class1);
-			System.out.println("nest" + nestedObj);
-
-			if (isPresentNestedObj(subActualLevel)) {
-				String s = subActualLevel.substring(subActualLevel.lastIndexOf(nestedObj) + nestedObj.length() + 2,
-						subActualLevel.lastIndexOf("}") - 1).replace("\"", "");
-				System.out.println("s " + s);
-				String[] sSplit = s.split(",");
-				String nestedValue = sSplit[0];
-				String nestedValue2 = sSplit[1];
-
-				String[] nestedValueArr = nestedValue.split(":");
-				String[] nestedValue2Arr = nestedValue2.split(":");
-
-				String nestedK = nestedValueArr[0];
-				String nestedV = nestedValueArr[1];
-				String nestedK2 = nestedValue2Arr[0];
-				String nestedV2 = nestedValue2Arr[1];
-
-				System.out.println("k " + nestedK);
-				System.out.println("v " + nestedV);
-
-				System.out.println("k " + nestedK2);
-				System.out.println("v " + nestedV2);
-
-				Assicurazione ass = new Assicurazione();
-				setAssicurazione(nestedV, nestedV2, ass);
-				System.out.println(ass);
-				auto.setAssicurazione(ass);
-
-			}
-				if (objMap.containsKey("anno")) {
-					auto.setAnno(Integer.valueOf((objMap.get("anno"))));
-				}
-
-				if (objMap.containsKey("marca")) {
-					auto.setMarca(objMap.get("marca"));
-				}
-
-				if (objMap.containsKey("modello")) {
-					auto.setModello(objMap.get("modello"));
-				}
 			
-
-			return auto;
-
-		}
-
-		private boolean isPresentNestedObj(String subActualLevel) {
-
-			return subActualLevel.contains("{") && subActualLevel.contains("}");
-
-		}
-
-		private String findNestedObjName(String jsonString, Class<?> clazz) {
-
-			List<String> fields = Arrays.asList(jsonString.split(","));
-
-			for (int i = 0; i < fields.size(); i++) {
-				if (fields.get(i).contains("{")) {
-					String[] keyVal = fields.get(i).split(":");
-					System.out.println("//////////" + (keyVal[0]));
-					//				System.out.println("//////////"+(keyVal[1].replace("{", "")));
-					//
-					return keyVal[0];
-				}
+			for (int i=0; i<fields.size(); i++) {
+				String[] keyVal = fields.get(i).split(","); 
+				System.out.println("fffffff "+ Arrays.toString(keyVal));
+				String key = keyVal[0].replace("\"", "").trim();
+//				System.out.println("*************"+Arrays.toString(keyVal));
+//				String value = keyVal[1].replace("\"", "").trim();
+//				System.out.println(keyVal[1]);
+//				objMap.put(key, value);
 			}
+			
+		
+		String subActualLevel = jsonString.substring(1, jsonString.length() - 1);
+		System.out.println("sub " + subActualLevel);
+		String nestedObj = findNestedObjName(subActualLevel, class1);
+		
+		String arrayObj = findArrayObjName(jsonString, class1);
+		
+		System.out.println("nest" + nestedObj);
 
-			return null;
+		if (isPresentNestedObj(subActualLevel)) {
+			String s = subActualLevel.substring(subActualLevel.lastIndexOf(nestedObj) + nestedObj.length() + 2,
+					subActualLevel.lastIndexOf("}")).replace("\"", "");
+			System.out.println("s " + s);
+			String[] sSplit = s.split(",");
+			String nestedValue = sSplit[0];
+			String nestedValue2 = sSplit[1];
+
+			String[] nestedValueArr = nestedValue.split(":");
+			String[] nestedValue2Arr = nestedValue2.split(":");
+
+			String nestedK = nestedValueArr[0];
+			String nestedV = nestedValueArr[1];
+			String nestedK2 = nestedValue2Arr[0];
+			String nestedV2 = nestedValue2Arr[1];
+
+			System.out.println("k " + nestedK);
+			System.out.println("v " + nestedV);
+
+			System.out.println("k " + nestedK2);
+			System.out.println("v " + nestedV2);
+
+			Assicurazione ass = new Assicurazione();
+			setAssicurazione(nestedV, nestedV2, ass);
+			System.out.println(ass);
+			auto.setAssicurazione(ass);
+			
+		}
+		
+		if (isPresentArrayObj(subActualLevel)) {
+			String s2 = subActualLevel.substring(subActualLevel.lastIndexOf(arrayObj) + arrayObj.length() + 2,
+					subActualLevel.indexOf("]") -1).replace("\"", "");
+			System.out.println("s2 " + s2);
+			String[] sSplit2 = s2.split(",");
+			auto.setAllestimento(sSplit2);
+		}
+		
+
+		if (objMap.containsKey("anno")) {
+			auto.setAnno(Integer.valueOf((objMap.get("anno"))));
+		}
+
+		if (objMap.containsKey("marca")) {
+			auto.setMarca(objMap.get("marca"));
+		}
+
+		if (objMap.containsKey("modello")) {
+			auto.setModello(objMap.get("modello"));
 		}
 
 
+		return auto;
 
-		private void setAssicurazione (String dataInizio, String dataFine, Assicurazione ass) throws ParseException {
+	}
 
-			String[] splitDateInizio = dataInizio.split("-");
+	private boolean isPresentNestedObj(String subActualLevel) {
 
-			Date dataInizioContratto = new GregorianCalendar(Integer.valueOf(splitDateInizio[2]), Integer.valueOf(splitDateInizio[1])-1, Integer.valueOf(splitDateInizio[0])).getTime();
-			//System.out.println(dataInizioContratto);
+		return subActualLevel.contains("{") && subActualLevel.contains("}");
 
-			SimpleDateFormat sdfInizioContratto = new SimpleDateFormat("dd-MM-yyyy");
-			String dateInizio = sdfInizioContratto.format(dataInizioContratto);
-			//System.out.println(dateInizio);
-			Date dateI = sdfInizioContratto.parse(dateInizio);
-			ass.setInizioContratto(dateI);
-			//System.out.println(dateI);
+	}
 
-			//fine contratto
-			String[] splitDateScadenza = dataFine.split("-");
+	private boolean isPresentArrayObj(String subActualLevel) {
 
-			Date dataScadenzaContratto = new GregorianCalendar(Integer.valueOf(splitDateScadenza[2]), Integer.valueOf(splitDateScadenza[1])-1, Integer.valueOf(splitDateScadenza[0])).getTime();
-			//System.out.println(dataScadenzaContratto);
+		return subActualLevel.contains("[") && subActualLevel.contains("]");
 
-			SimpleDateFormat sdfScadenzaContratto = new SimpleDateFormat("dd-MM-yyyy");
-			String dateScadenza = sdfScadenzaContratto.format(dataScadenzaContratto);
-			Date dateF = sdfScadenzaContratto.parse(dateScadenza);
-			ass.setScadenzaContratto(dateF);
-			//System.out.println(dateScadenza);
+	}
 
+	private String findNestedObjName(String jsonString, Class<?> clazz) {
+
+		List<String> fields = Arrays.asList(jsonString.split(","));
+
+		for (int i = 0; i < fields.size(); i++) {
+			if (fields.get(i).contains("{")) {
+				String[] keyVal = fields.get(i).split(":");
+				System.out.println("//////////" + (keyVal[0]));
+				System.out.println("//////////" + (keyVal[1]));
+				//				System.out.println("//////////"+(keyVal[1].replace("{", "")));
+				//
+				return keyVal[0];
+			}
 		}
+
+		return null;
+	}
 	
-	
+	private String findArrayObjName(String jsonString, Class<?> clazz) {
+
+		List<String> fields = Arrays.asList(jsonString.split(","));
+
+		for (int i = 0; i < fields.size(); i++) {
+			if (fields.get(i).contains("[")) {
+				String[] keyVal = fields.get(i).split(":");
+				System.out.println("//////////" + (keyVal[0]));
+				//				System.out.println("//////////"+(keyVal[1].replace("{", "")));
+				//
+				return keyVal[0];
+			}
+		}
+
+		return null;
+	}
+
+
+
+	private void setAssicurazione (String dataInizio, String dataFine, Assicurazione ass) throws ParseException {
+
+		String[] splitDateInizio = dataInizio.split("-");
+
+		Date dataInizioContratto = new GregorianCalendar(Integer.valueOf(splitDateInizio[2]), Integer.valueOf(splitDateInizio[1])-1, Integer.valueOf(splitDateInizio[0])).getTime();
+		//System.out.println(dataInizioContratto);
+
+		SimpleDateFormat sdfInizioContratto = new SimpleDateFormat("dd-MM-yyyy");
+		String dateInizio = sdfInizioContratto.format(dataInizioContratto);
+		//System.out.println(dateInizio);
+		Date dateI = sdfInizioContratto.parse(dateInizio);
+		ass.setInizioContratto(dateI);
+		//System.out.println(dateI);
+
+		//fine contratto
+		String[] splitDateScadenza = dataFine.split("-");
+
+		Date dataScadenzaContratto = new GregorianCalendar(Integer.valueOf(splitDateScadenza[2]), Integer.valueOf(splitDateScadenza[1])-1, Integer.valueOf(splitDateScadenza[0])).getTime();
+		//System.out.println(dataScadenzaContratto);
+
+		SimpleDateFormat sdfScadenzaContratto = new SimpleDateFormat("dd-MM-yyyy");
+		String dateScadenza = sdfScadenzaContratto.format(dataScadenzaContratto);
+		Date dateF = sdfScadenzaContratto.parse(dateScadenza);
+		ass.setScadenzaContratto(dateF);
+		//System.out.println(dateScadenza);
+
+	}
+
+
 }
 
