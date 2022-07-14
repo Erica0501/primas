@@ -9,12 +9,20 @@ public class Persona {
 	private String cognome;
 	
 	private int eta;
+	
+	private Patente patente;
+	
+	private CartaIdentita cartaIdentita;
+	
+	public Persona() {}
 
-	public Persona(String nome, String cognome, int eta) {
+	public Persona(String nome, String cognome, int eta, Patente patente, CartaIdentita cartaIdentita) {
 		super();
 		this.nome = nome;
 		this.cognome = cognome;
 		this.eta = eta;
+		this.patente = patente;
+		this.cartaIdentita = cartaIdentita;
 	}
 
 	public String getNome() {
@@ -41,14 +49,25 @@ public class Persona {
 		this.eta = eta;
 	}
 
-	@Override
-	public String toString() {
-		return "nome=" + nome + ", cognome=" + cognome + ", eta=" + eta + "";
+	public Patente getPatente() {
+		return patente;
+	}
+
+	public void setPatente(Patente patente) {
+		this.patente = patente;
+	}
+
+	public CartaIdentita getCartaIdentita() {
+		return cartaIdentita;
+	}
+
+	public void setCartaIdentita(CartaIdentita cartaIdentita) {
+		this.cartaIdentita = cartaIdentita;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cognome, eta, nome);
+		return Objects.hash(cartaIdentita, cognome, eta, nome, patente);
 	}
 
 	@Override
@@ -60,6 +79,15 @@ public class Persona {
 		if (getClass() != obj.getClass())
 			return false;
 		Persona other = (Persona) obj;
-		return Objects.equals(cognome, other.cognome) && eta == other.eta && Objects.equals(nome, other.nome);
+		return Objects.equals(cartaIdentita, other.cartaIdentita) && Objects.equals(cognome, other.cognome)
+				&& eta == other.eta && Objects.equals(nome, other.nome) && Objects.equals(patente, other.patente);
 	}
+
+	@Override
+	public String toString() {
+		return "Persona (nome=" + nome + ", cognome=" + cognome + ", eta=" + eta + ", patente=" + patente
+				+ ", cartaIdentita=" + cartaIdentita + ")";
+	}
+
+	
 }
