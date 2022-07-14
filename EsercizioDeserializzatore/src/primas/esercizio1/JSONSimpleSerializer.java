@@ -2,13 +2,9 @@ package primas.esercizio1;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class JSONSimpleSerializer {
 
@@ -48,7 +44,7 @@ public class JSONSimpleSerializer {
 	}
 	// elimino le graffe all'inizio e alla fine
 	public String eliminaGraffe(String jsonString) {
-		System.out.println("ppppppppppppppppp" + jsonString);
+		
 		if(jsonString.startsWith("{") && jsonString.endsWith("}")) {
 			return jsonString.substring(1, jsonString.length() - 1);
 		} 
@@ -58,23 +54,93 @@ public class JSONSimpleSerializer {
 	
 	public String valoreOggettoAnnidato(String jsonString, String nomeOggAnnidato) {
 		
-		// String s = subActualLevel.substring(subActualLevel.lastIndexOf(nestedObj) + nestedObj.length() + 2,
-		//		subActualLevel.lastIndexOf("}")).replace("\"", "");
 		return eliminaGraffe(jsonString.substring(jsonString.lastIndexOf(nomeOggAnnidato) + nomeOggAnnidato.length() + 1, jsonString.lastIndexOf("}") + 1).replace("\"", ""));
-	
 	}
 	
 	public void setValoriAssicurazione(String newJson, Assicurazione assic) {
 		// TODO aggiungere controllo
-		String[] arrayKV = newJson.split(",");
-		System.out.println(arrayKV[0].substring(arrayKV[0].lastIndexOf(":") + 1, arrayKV[0].length()));
-		assic.setInizioContratto(null);
+		String[] arrayFields = newJson.split(",");
+		
+		for(int i = 0; i < arrayFields.length; i++) {
+			String[] arrayKV = arrayFields[i].split(":");
+			
+			if(arrayKV[0].equals("inizioContratto")) {
+				assic.setInizioContratto(convertiTipoData(arrayKV[1]));
+			}
+			if(arrayKV[0].equals("scadenzaContratto")) {
+				assic.setScadenzaContratto(convertiTipoData(arrayKV[1]));
+			}
+		}
 	}
 	
-	public Date convertiTipoData(String data) {
+	public LocalDate convertiTipoData(String data) {
 		
-	//	Date dataInizioContratto = new GregorianCalendar(Integer.valueOf(data[2]), Integer.valueOf(splitDateInizio[1])-1, Integer.valueOf(splitDateInizio[0])).getTime();
-		return null;
+		LocalDate localDate = LocalDate.parse(data);
+		
+		return localDate;
+	}
+	
+	public String restituisciJson(String nomeOggettoAnnidato, String jsonString) {
+		
+		String[] arrayFields = jsonString.split(",");
+		boolean isNested = false;
+		String newJson = "";
+		
+		for(int i = 0; i < arrayFields.length; i++) {
+			
+			if(arrayFields[i].contains("{")) {
+				
+				isNested = true;
+			}
+			if(!isNested) {
+				newJson += arrayFields[i];
+			}
+			if(arrayFields[i].contains("}")) {
+				
+				isNested = false;
+			}
+		}	
+		char[] newJsonChars = newJson.toCharArray();
+		newJson = ""; 
+		for(int i = 0; i < newJsonChars.length; i++) {
+			if(newJsonChars.length != i + 1 && (newJsonChars[i] == '\"' && newJsonChars[i + 1] == '\"') || newJsonChars[i] == ']') {
+				newJson += newJsonChars[i] + ",";
+			} else {
+				newJson += newJsonChars[i];
+			}
+		}
+		return newJson;
+	}
+	
+	public void setValoriAutomobile(String jsonString, Automobile auto) {
+
+		jsonString = jsonString.replace("\"", "").trim();
+		String[] fields = jsonString.split(",");
+
+		for (int i = 0; i < fields.length; i++) {
+			String[] arrayKV = fields[i].split(":");
+			
+			if (arrayKV[0].equals("marca")) {
+				auto.setMarca(arrayKV[1]);
+			}
+			if (arrayKV[0].equals("modello")) {
+				auto.setModello(arrayKV[1]);
+			}
+			if (arrayKV[0].equals("allestimento")) {
+				String[] allestimento = costruttoreArray(jsonString, arrayKV[0]);
+				auto.setAllestimento(allestimento);
+			}
+			if (arrayKV[0].equals("anno")) {
+				auto.setAnno(Integer.valueOf(arrayKV[1]));
+			}
+		}
+	}
+	
+	public String[] costruttoreArray(String arrayRaw, String nomeAttributo) {
+		
+		arrayRaw = arrayRaw.substring(arrayRaw.lastIndexOf(nomeAttributo) + nomeAttributo.length() + 2, arrayRaw.lastIndexOf("]"));
+		String[] stringArray = arrayRaw.split(",");
+		return stringArray;
 	}
 
 	public Automobile deserialize(String jsonString, Class<Automobile> class1) throws ParseException {
@@ -83,108 +149,23 @@ public class JSONSimpleSerializer {
 		String newJson = eliminaGraffe(jsonString);
 		Automobile auto = new Automobile();
 		Assicurazione assi = new Assicurazione();
-		
+
 		String nomeOggAnnidato = null;
-		if(contieneOggettoAnnidato(newJson)) {
+		if (contieneOggettoAnnidato(newJson)) {
 			nomeOggAnnidato = cercaNomeOggettoAnnidato(newJson);
 			String valoreOggAnnidato = valoreOggettoAnnidato(newJson, nomeOggAnnidato);
 			setValoriAssicurazione(valoreOggAnnidato, assi);
 		}
-		
-		List<String> fields = Arrays.asList(newJson.split(":"));
-
-		Map<String, String> objMap = new HashMap<String, String>();
-		System.out.println("fields " + fields );
-		
-		Field[] attributes = class1.getDeclaredFields();
-		for (int i = 0; i < attributes.length; i++) {
-				System.out.println("Sto serializzando l'attributo " 
-						+ attributes[i].getName());
-		}
-			
-			for (int i=0; i<fields.size(); i++) {
-				String[] keyVal = fields.get(i).split(","); 
-				System.out.println("fffffff "+ Arrays.toString(keyVal));
-				String key = keyVal[0].replace("\"", "").trim();
-//				System.out.println("*************"+Arrays.toString(keyVal));
-//				String value = keyVal[1].replace("\"", "").trim();
-//				System.out.println(keyVal[1]);
-//				objMap.put(key, value);
-			}
-			
-		
-		String subActualLevel = jsonString.substring(1, jsonString.length() - 1);
-		System.out.println("sub " + subActualLevel);
-		String nestedObj = cercaNomeOggettoAnnidato(subActualLevel);
-		
-		String arrayObj = findArrayObjName(jsonString, class1);
-		
-		System.out.println("nest" + nestedObj);
-
-		if (contieneOggettoAnnidato(subActualLevel)) {
-			String s = subActualLevel.substring(subActualLevel.lastIndexOf(nestedObj) + nestedObj.length() + 2,
-					subActualLevel.lastIndexOf("}")).replace("\"", "");
-			System.out.println("s " + s);
-			String[] sSplit = s.split(",");
-			String nestedValue = sSplit[0];
-			String nestedValue2 = sSplit[1];
-
-			String[] nestedValueArr = nestedValue.split(":");
-			String[] nestedValue2Arr = nestedValue2.split(":");
-
-			String nestedK = nestedValueArr[0];
-			String nestedV = nestedValueArr[1];
-			String nestedK2 = nestedValue2Arr[0];
-			String nestedV2 = nestedValue2Arr[1];
-
-			System.out.println("k " + nestedK);
-			System.out.println("v " + nestedV);
-
-			System.out.println("k " + nestedK2);
-			System.out.println("v " + nestedV2);
-
-			Assicurazione ass = new Assicurazione();
-			setAssicurazione(nestedV, nestedV2, ass);
-			System.out.println(ass);
-			auto.setAssicurazione(ass);
-			
-		}
-		
-		if (isPresentArrayObj(subActualLevel)) {
-			String s2 = subActualLevel.substring(subActualLevel.lastIndexOf(arrayObj) + arrayObj.length() + 2,
-					subActualLevel.indexOf("]") -1).replace("\"", "");
-			System.out.println("s2 " + s2);
-			String[] sSplit2 = s2.split(",");
-			auto.setAllestimento(sSplit2);
-		}
-		
-
-		if (objMap.containsKey("anno")) {
-			auto.setAnno(Integer.valueOf((objMap.get("anno"))));
-		}
-
-		if (objMap.containsKey("marca")) {
-			auto.setMarca(objMap.get("marca"));
-		}
-
-		if (objMap.containsKey("modello")) {
-			auto.setModello(objMap.get("modello"));
-		}
-
+		newJson = restituisciJson(nomeOggAnnidato, newJson);
+		setValoriAutomobile(newJson, auto);
+		auto.setAssicurazione(assi);
 
 		return auto;
-
 	}
 
 	private boolean contieneOggettoAnnidato(String subActualLevel) {
 
 		return subActualLevel.contains("{") && subActualLevel.contains("}");
-
-	}
-
-	private boolean isPresentArrayObj(String subActualLevel) {
-
-		return subActualLevel.contains("[") && subActualLevel.contains("]");
 
 	}
 
@@ -202,54 +183,5 @@ public class JSONSimpleSerializer {
 
 		return null;
 	}
-	
-	private String findArrayObjName(String jsonString, Class<?> clazz) {
-
-		List<String> fields = Arrays.asList(jsonString.split(","));
-
-		for (int i = 0; i < fields.size(); i++) {
-			if (fields.get(i).contains("[")) {
-				String[] keyVal = fields.get(i).split(":");
-				System.out.println("//////////" + (keyVal[0]));
-				//				System.out.println("//////////"+(keyVal[1].replace("{", "")));
-				//
-				return keyVal[0];
-			}
-		}
-
-		return null;
-	}
-
-
-
-	private void setAssicurazione (String dataInizio, String dataFine, Assicurazione ass) throws ParseException {
-
-		String[] splitDateInizio = dataInizio.split("-");
-
-		Date dataInizioContratto = new GregorianCalendar(Integer.valueOf(splitDateInizio[2]), Integer.valueOf(splitDateInizio[1])-1, Integer.valueOf(splitDateInizio[0])).getTime();
-		//System.out.println(dataInizioContratto);
-
-		SimpleDateFormat sdfInizioContratto = new SimpleDateFormat("dd-MM-yyyy");
-		String dateInizio = sdfInizioContratto.format(dataInizioContratto);
-		//System.out.println(dateInizio);
-		Date dateI = sdfInizioContratto.parse(dateInizio);
-		ass.setInizioContratto(dateI);
-		//System.out.println(dateI);
-
-		//fine contratto
-		String[] splitDateScadenza = dataFine.split("-");
-
-		Date dataScadenzaContratto = new GregorianCalendar(Integer.valueOf(splitDateScadenza[2]), Integer.valueOf(splitDateScadenza[1])-1, Integer.valueOf(splitDateScadenza[0])).getTime();
-		//System.out.println(dataScadenzaContratto);
-
-		SimpleDateFormat sdfScadenzaContratto = new SimpleDateFormat("dd-MM-yyyy");
-		String dateScadenza = sdfScadenzaContratto.format(dataScadenzaContratto);
-		Date dateF = sdfScadenzaContratto.parse(dateScadenza);
-		ass.setScadenzaContratto(dateF);
-		//System.out.println(dateScadenza);
-
-	}
-
-
 }
 

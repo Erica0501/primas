@@ -1,47 +1,43 @@
 package primas.esercizio1;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Assicurazione {
 	
-	private Date inizioContratto;
+	private LocalDate inizioContratto;
 	
-	private Date scadenzaContratto;
+	private LocalDate scadenzaContratto;
 	
 	//private Persona contraente;
 	
 	public Assicurazione() {}
 
-	public Assicurazione(Date inizioContratto, Date scadenzaContratto) {
+	public Assicurazione(LocalDate inizioContratto, LocalDate scadenzaContratto) {
 		super();
 		this.inizioContratto = inizioContratto;
 		this.scadenzaContratto = scadenzaContratto;
 	}
 
-	public Date getInizioContratto() {
+	public LocalDate getInizioContratto() {
 		return inizioContratto;
 	}
 
-	public void setInizioContratto(Date inizioContratto) {
+	public void setInizioContratto(LocalDate inizioContratto) {
 		this.inizioContratto = inizioContratto;
 	}
 
-	public Date getScadenzaContratto() {
+	public LocalDate getScadenzaContratto() {
 		return scadenzaContratto;
 	}
 
-	public void setScadenzaContratto(Date scadenzaContratto) {
+	public void setScadenzaContratto(LocalDate scadenzaContratto) {
 		this.scadenzaContratto = scadenzaContratto;
 	}
 
-	
-
-
 	@Override
 	public String toString() {
-		return "inizioContratto=" + inizioContratto + ", scadenzaContratto=" + scadenzaContratto
-				+ "";
+		return "Assicurazione (inizioContratto = " + inizioContratto + ", scadenzaContratto = " + scadenzaContratto + ")";
 	}
 
 	@Override

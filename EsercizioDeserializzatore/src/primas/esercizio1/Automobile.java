@@ -100,7 +100,8 @@ public class Automobile {
 
 	@Override
 	public String toString() {
-		return marca+ " "+  modello + " " + anno + " " + assicurazione + " " + "allestimento " + Arrays.toString(allestimento) + " ";
+		return "(marca = " + marca + ", modello = " + modello + ", anno = " + anno + ", "
+				+ assicurazione + ", allestimento = " + Arrays.toString(allestimento) + ")";
 	}
 	
 }
