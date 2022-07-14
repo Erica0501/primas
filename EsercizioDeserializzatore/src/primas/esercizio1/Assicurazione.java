@@ -1,52 +1,60 @@
 package primas.esercizio1;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Assicurazione {
+	
+	private LocalDate inizioContratto;
+	
+	private LocalDate scadenzaContratto;
+	
+	//private Persona contraente;
+	
+	public Assicurazione() {}
 
-        private Date inizioContratto;
+	public Assicurazione(LocalDate inizioContratto, LocalDate scadenzaContratto) {
+		super();
+		this.inizioContratto = inizioContratto;
+		this.scadenzaContratto = scadenzaContratto;
+	}
 
-        private Date scadenzaContratto;
+	public LocalDate getInizioContratto() {
+		return inizioContratto;
+	}
 
-        //private Persona contraente;
+	public void setInizioContratto(LocalDate inizioContratto) {
+		this.inizioContratto = inizioContratto;
+	}
 
-        public Assicurazione() {}
+	public LocalDate getScadenzaContratto() {
+		return scadenzaContratto;
+	}
 
-    public Date getInizioContratto() {
-        return inizioContratto;
-    }
+	public void setScadenzaContratto(LocalDate scadenzaContratto) {
+		this.scadenzaContratto = scadenzaContratto;
+	}
 
-    public void setInizioContratto(Date inizioContratto) {
-        this.inizioContratto = inizioContratto;
-    }
+	@Override
+	public String toString() {
+		return "Assicurazione (inizioContratto = " + inizioContratto + ", scadenzaContratto = " + scadenzaContratto + ")";
+	}
 
-    public Date getScadenzaContratto() {
-        return scadenzaContratto;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(inizioContratto, scadenzaContratto);
+	}
 
-    public void setScadenzaContratto(Date scadenzaContratto) {
-        this.scadenzaContratto = scadenzaContratto;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Assicurazione that = (Assicurazione) o;
-        return Objects.equals(inizioContratto, that.inizioContratto) && Objects.equals(scadenzaContratto, that.scadenzaContratto);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(inizioContratto, scadenzaContratto);
-    }
-
-    @Override
-    public String toString() {
-        return "Assicurazione{" +
-                "inizioContratto=" + inizioContratto +
-                ", scadenzaContratto=" + scadenzaContratto +
-                '}';
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Assicurazione other = (Assicurazione) obj;
+		return Objects.equals(inizioContratto, other.inizioContratto)
+				&& Objects.equals(scadenzaContratto, other.scadenzaContratto);
+	}
 }
