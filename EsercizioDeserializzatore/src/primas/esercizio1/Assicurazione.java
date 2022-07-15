@@ -9,7 +9,6 @@ public class Assicurazione {
 	
 	private LocalDate scadenzaContratto;
 	
-	//private Persona contraente;
 	
 	public Assicurazione() {}
 

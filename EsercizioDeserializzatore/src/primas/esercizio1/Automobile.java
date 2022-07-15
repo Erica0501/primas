@@ -15,6 +15,8 @@ public class Automobile {
 	
 	private Assicurazione assicurazione;
 	
+	private Persona contraente;
+	
 	private String [] allestimento;
 
 	public Automobile() {

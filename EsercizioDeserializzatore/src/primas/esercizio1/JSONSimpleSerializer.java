@@ -46,9 +46,9 @@ public class JSONSimpleSerializer {
 	public String eliminaGraffe(String jsonString) {
 		
 		if(jsonString.startsWith("{") && jsonString.endsWith("}")) {
-			return jsonString.substring(1, jsonString.length() - 1);
+			return jsonString.substring(1, jsonString.length() - 1).trim();
 		} 
-			return null;
+			return jsonString;
 		
 	}
 	
@@ -82,7 +82,8 @@ public class JSONSimpleSerializer {
 	
 	public String restituisciJson(String nomeOggettoAnnidato, String jsonString) {
 		
-		String[] arrayFields = jsonString.split(",");
+		String[] arrayFields = jsonString.split("");
+		System.out.println("json string di partenza "+Arrays.toString(arrayFields));
 		boolean isNested = false;
 		String newJson = "";
 		
@@ -100,14 +101,20 @@ public class JSONSimpleSerializer {
 				isNested = false;
 			}
 		}	
+		
+		
 		char[] newJsonChars = newJson.toCharArray();
+		System.out.println("char array "+Arrays.toString(newJsonChars));
 		newJson = ""; 
 		for(int i = 0; i < newJsonChars.length; i++) {
 			if(newJsonChars.length != i + 1 && (newJsonChars[i] == '\"' && newJsonChars[i + 1] == '\"') || newJsonChars[i] == ']') {
-				newJson += newJsonChars[i] + ",";
+				newJson += newJsonChars[i] + "".trim();
+				System.out.println("new json "+newJson);
 			} else {
 				newJson += newJsonChars[i];
+				System.out.println("else new json "+newJson);
 			}
+			
 		}
 		return newJson;
 	}
@@ -116,21 +123,22 @@ public class JSONSimpleSerializer {
 
 		jsonString = jsonString.replace("\"", "").trim();
 		String[] fields = jsonString.split(",");
-
+		
 		for (int i = 0; i < fields.length; i++) {
-			String[] arrayKV = fields[i].split(":");
+			String[] arrayKV = fields[i].split(",");
+			arrayKV = fields[i].split(":");
 			
-			if (arrayKV[0].equals("marca")) {
+			if (arrayKV[0].trim().equals("marca")) {
 				auto.setMarca(arrayKV[1]);
 			}
-			if (arrayKV[0].equals("modello")) {
+			if (arrayKV[0].trim().equals("modello")) {
 				auto.setModello(arrayKV[1]);
 			}
-			if (arrayKV[0].equals("allestimento")) {
+			if (arrayKV[0].trim().equals("allestimento")) {
 				String[] allestimento = costruttoreArray(jsonString, arrayKV[0]);
 				auto.setAllestimento(allestimento);
 			}
-			if (arrayKV[0].equals("anno")) {
+			if (arrayKV[0].trim().equals("anno")) {
 				auto.setAnno(Integer.valueOf(arrayKV[1]));
 			}
 		}
@@ -146,19 +154,27 @@ public class JSONSimpleSerializer {
 	public Automobile deserialize(String jsonString, Class<Automobile> class1) throws ParseException {
 
 		// elimino le graffe dal json
+		System.out.println(jsonString);
 		String newJson = eliminaGraffe(jsonString);
+		System.out.println("json input "+newJson);
 		Automobile auto = new Automobile();
 		Assicurazione assi = new Assicurazione();
 
 		String nomeOggAnnidato = null;
 		if (contieneOggettoAnnidato(newJson)) {
+			
 			nomeOggAnnidato = cercaNomeOggettoAnnidato(newJson);
+			System.out.println("nome ogg annidato "+nomeOggAnnidato);
 			String valoreOggAnnidato = valoreOggettoAnnidato(newJson, nomeOggAnnidato);
+			System.out.println("valore ogg annidato "+valoreOggAnnidato);
 			setValoriAssicurazione(valoreOggAnnidato, assi);
+			
 		}
 		newJson = restituisciJson(nomeOggAnnidato, newJson);
 		setValoriAutomobile(newJson, auto);
+		System.out.println("new json input "+newJson);
 		auto.setAssicurazione(assi);
+		
 
 		return auto;
 	}
@@ -184,4 +200,5 @@ public class JSONSimpleSerializer {
 		return null;
 	}
 }
+
 
