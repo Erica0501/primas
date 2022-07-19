@@ -13,11 +13,12 @@ public class AnnotationGames {
 
     public static void main(String[] args) throws Exception {
 
-        Automobile auto = new Automobile("Toyota", "Corolla", 2001);
+        Automobile auto = new Automobile("Toyota", "Corolla", 2001, null, null, null);
         Assicurazione assicur = new Assicurazione(LocalDate.parse("2020-02-17"), LocalDate.parse("2023-07-09"));
         auto.setAssicurazione(assicur);
         //System.out.println("Auto da serializzare: " + auto);
         JSONSimpleSerializer my_serializer = new JSONSimpleSerializer();
+        my_serializer.serialize(auto);
         Gson gson = new Gson();
         List<Object> list = getListObjectFromFileJson(gson);
 
