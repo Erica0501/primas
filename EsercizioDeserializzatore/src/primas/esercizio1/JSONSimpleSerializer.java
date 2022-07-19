@@ -1,10 +1,11 @@
 package primas.esercizio1;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.text.ParseException;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class JSONSimpleSerializer {
 
@@ -17,7 +18,6 @@ public class JSONSimpleSerializer {
 		//serialize
 		for (int i = 0; i < attributes.length; i++) {
 			if(attributes[i].getAnnotation(JSONSerialField.class) != null) {
-				System.out.println(attributes[i].getType());
 				System.out.println("Sto serializzando l'attributo " 
 						+ attributes[i].getName());
 				jsonString.append("\t");
@@ -40,164 +40,112 @@ public class JSONSimpleSerializer {
 			}
 		}
 		jsonString.append("}");
-		System.out.println(/*"Stringa serializzata:\n " +*/ jsonString);
-	}
-	// elimino le graffe all'inizio e alla fine
-	public String eliminaGraffe(String jsonString) {
-		
-		if(jsonString.startsWith("{") && jsonString.endsWith("}")) {
-			return jsonString.substring(1, jsonString.length() - 1).trim();
-		} 
-			return jsonString;
-		
-	}
-	
-	public String valoreOggettoAnnidato(String jsonString, String nomeOggAnnidato) {
-		
-		return eliminaGraffe(jsonString.substring(jsonString.lastIndexOf(nomeOggAnnidato) + nomeOggAnnidato.length() + 1, jsonString.lastIndexOf("}") + 1).replace("\"", ""));
-	}
-	
-	public void setValoriAssicurazione(String newJson, Assicurazione assic) {
-		// TODO aggiungere controllo
-		String[] arrayFields = newJson.split(",");
-		
-		for(int i = 0; i < arrayFields.length; i++) {
-			String[] arrayKV = arrayFields[i].split(":");
-			
-			if(arrayKV[0].equals("inizioContratto")) {
-				assic.setInizioContratto(convertiTipoData(arrayKV[1]));
-			}
-			if(arrayKV[0].equals("scadenzaContratto")) {
-				assic.setScadenzaContratto(convertiTipoData(arrayKV[1]));
-			}
-		}
-	}
-	
-	public LocalDate convertiTipoData(String data) {
-		
-		LocalDate localDate = LocalDate.parse(data);
-		
-		return localDate;
-	}
-	
-	public String restituisciJson(String nomeOggettoAnnidato, String jsonString) {
-		
-		String[] arrayFields = jsonString.split("");
-		System.out.println("json string di partenza "+Arrays.toString(arrayFields));
-		boolean isNested = false;
-		String newJson = "";
-		
-		for(int i = 0; i < arrayFields.length; i++) {
-			
-			if(arrayFields[i].contains("{")) {
-				
-				isNested = true;
-			}
-			if(!isNested) {
-				newJson += arrayFields[i];
-			}
-			if(arrayFields[i].contains("}")) {
-				
-				isNested = false;
-			}
-		}	
-		
-		
-		char[] newJsonChars = newJson.toCharArray();
-		System.out.println("char array "+Arrays.toString(newJsonChars));
-		newJson = ""; 
-		for(int i = 0; i < newJsonChars.length; i++) {
-			if(newJsonChars.length != i + 1 && (newJsonChars[i] == '\"' && newJsonChars[i + 1] == '\"') || newJsonChars[i] == ']') {
-				newJson += newJsonChars[i] + "".trim();
-				System.out.println("new json "+newJson);
-			} else {
-				newJson += newJsonChars[i];
-				System.out.println("else new json "+newJson);
-			}
-			
-		}
-		return newJson;
-	}
-	
-	public void setValoriAutomobile(String jsonString, Automobile auto) {
-
-		jsonString = jsonString.replace("\"", "").trim();
-		String[] fields = jsonString.split(",");
-		
-		for (int i = 0; i < fields.length; i++) {
-			String[] arrayKV = fields[i].split(",");
-			arrayKV = fields[i].split(":");
-			
-			if (arrayKV[0].trim().equals("marca")) {
-				auto.setMarca(arrayKV[1]);
-			}
-			if (arrayKV[0].trim().equals("modello")) {
-				auto.setModello(arrayKV[1]);
-			}
-			if (arrayKV[0].trim().equals("allestimento")) {
-				String[] allestimento = costruttoreArray(jsonString, arrayKV[0]);
-				auto.setAllestimento(allestimento);
-			}
-			if (arrayKV[0].trim().equals("anno")) {
-				auto.setAnno(Integer.valueOf(arrayKV[1]));
-			}
-		}
-	}
-	
-	public String[] costruttoreArray(String arrayRaw, String nomeAttributo) {
-		
-		arrayRaw = arrayRaw.substring(arrayRaw.lastIndexOf(nomeAttributo) + nomeAttributo.length() + 2, arrayRaw.lastIndexOf("]"));
-		String[] stringArray = arrayRaw.split(",");
-		return stringArray;
+		System.out.println("Stringa serializzata:\n " + jsonString);
 	}
 
-	public Automobile deserialize(String jsonString, Class<Automobile> class1) throws ParseException {
+	@SuppressWarnings("unchecked")
+	public <T> T deserialize (String input, Class<T> clazz) {	
 
-		// elimino le graffe dal json
-		System.out.println(jsonString);
-		String newJson = eliminaGraffe(jsonString);
-		System.out.println("json input "+newJson);
-		Automobile auto = new Automobile();
-		Assicurazione assi = new Assicurazione();
+		String inputPulito = eliminaSpaziVuoti(input);
 
-		String nomeOggAnnidato = null;
-		if (contieneOggettoAnnidato(newJson)) {
-			
-			nomeOggAnnidato = cercaNomeOggettoAnnidato(newJson);
-			System.out.println("nome ogg annidato "+nomeOggAnnidato);
-			String valoreOggAnnidato = valoreOggettoAnnidato(newJson, nomeOggAnnidato);
-			System.out.println("valore ogg annidato "+valoreOggAnnidato);
-			setValoriAssicurazione(valoreOggAnnidato, assi);
-			
-		}
-		newJson = restituisciJson(nomeOggAnnidato, newJson);
-		setValoriAutomobile(newJson, auto);
-		System.out.println("new json input "+newJson);
-		auto.setAssicurazione(assi);
-		
-
-		return auto;
+		return (T) setObj(inputPulito, clazz);
 	}
 
-	private boolean contieneOggettoAnnidato(String subActualLevel) {
+	private String livelloOggetto (String input) {
 
-		return subActualLevel.contains("{") && subActualLevel.contains("}");
+		String obj = "";
+		int contatoreLivelli = 0;
+		char [] charArray = input.toCharArray();
 
-	}
+		for (int i=0; i<charArray.length; i++) {
+			obj += charArray[i];
+			if (charArray[i] == '{') {
+				contatoreLivelli++;
+			}if (charArray[i] == '}') {
+				contatoreLivelli--;
+			}
 
-	private String cercaNomeOggettoAnnidato(String jsonString) {
-
-		List<String> fields = Arrays.asList(jsonString.split(","));
-
-		for (int i = 0; i < fields.size(); i++) {
-			if (fields.get(i).contains("{")) {
-				String[] keyVal = fields.get(i).split(":");
-				
-				return keyVal[0];
+			if (contatoreLivelli == 0) {
+				break;
 			}
 		}
 
-		return null;
+		if (contatoreLivelli != 0) {
+			throw new RuntimeException("Oggetto Json malformato "+ eliminaSpaziVuoti(input));
+		}
+		return obj;
+	}
+
+	private <T> Object setObj (String input, Class<T> clazz) {
+
+		Object obj = null;
+
+		try {
+			Constructor<T> c = clazz.getConstructor();
+			obj = c.newInstance();
+
+			String livello = livelloOggetto(input.substring(input.indexOf('{')));
+
+			Field [] attributi = clazz.getDeclaredFields();
+
+
+			for (int i=0; i<attributi.length; i++) {
+				String nomeAttributo = attributi[i].getName();
+				Class<?> tipoAttributo = attributi[i].getType(); 
+
+				// per prendere getter/read e setter/write 
+				PropertyDescriptor pd = new PropertyDescriptor(nomeAttributo, clazz);
+				Method setter = pd.getWriteMethod();
+
+				String chiaveAttributoInJson = "\""+nomeAttributo+"\":";
+
+				if (livello.contains(chiaveAttributoInJson)) {
+					String inizioChiaveValore = livello.substring(livello.indexOf(chiaveAttributoInJson));
+					int indiceInizioValore = chiaveAttributoInJson.length();
+					String inizioValore = inizioChiaveValore.substring(indiceInizioValore);
+
+
+					if (MappaFunzioni.getFunzionePerTipo(attributi[i].getGenericType().getTypeName()) != null) {
+						MappaFunzioni.getFunzionePerTipo(attributi[i].getGenericType().getTypeName()).setTipo(setter, obj, inizioValore);
+					}
+
+					else if(inizioValore.startsWith("{")){
+						try {
+							Object oggettoAnnidato = setObj(inizioValore, tipoAttributo);
+							setter.invoke(obj, oggettoAnnidato);
+						}catch(Exception e) {
+							System.out.println("Impossibile costruire il seguente oggetto: "+tipoAttributo);
+						}
+					}					
+				}
+			}
+
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
+
+	private String eliminaSpaziVuoti (String input) {
+
+		boolean quoted = false;
+		String out = "";
+
+		for(Character c : input.toCharArray()) {
+
+			// cerca valori tra doppi apici 
+			// quoted true : non rimuovo spazi bianchi
+			if(c == '"') {
+				quoted = !quoted;
+			}
+
+			// se la stringa non è tra doppi apici , rimuove spazi bianchi
+			if(!quoted && (c == ' ' || c == '\r' || c == '\n' || c == '\t')) {
+				continue;
+			}
+			out += c;
+		}
+		return out;
 	}
 }
 

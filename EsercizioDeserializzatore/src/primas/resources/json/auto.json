@@ -1,0 +1,125 @@
+[
+  {
+    "marca": "BMW",
+    "modello": "955e",
+    "anno":2025
+  },
+  {
+    "marca": "BMW",
+    "modello": "955e",
+    "anno":2025,
+    "assicurazione": {
+      "inizioContratto": "2022-08-07",
+      "scadenzaContratto": "2023-08-01"
+    }
+  },
+  {
+    "marca": "BMW",
+    "modello": "955e",
+    "assicurazione": {
+      "inizioContratto": "2022-08-07",
+      "scadenzaContratto": "2023-08-01"
+    },
+    "anno":2025
+  },
+  {
+    "assicurazione": {
+      "inizioContratto": "2022-08-07",
+      "scadenzaContratto": "2023-08-01"
+    },
+    "marca": "BMW",
+    "modello": "955e",
+    "anno":2025
+  },
+  {
+    "marca": "BMW",
+    "modello": "955e",
+    "allestimento": [
+      "base",
+      "advantage",
+      "Msport",
+      "goldEdition"
+    ],
+    "anno":2025,
+    "assicurazione": {
+      "inizioContratto": "2022-08-07",
+      "scadenzaContratto": "2023-01-08"
+    }
+  },
+  {
+    "marca": "BMW",
+    "modello": "955e",
+    "anno":2025,
+    "allestimento": [
+      "base",
+      "advantage",
+      "Msport",
+      "goldEdition"
+    ],
+    "assicurazione": {
+      "inizioContratto": "2022-08-07",
+      "scadenzaContratto": "2023-01-08"
+    },
+    "contraente": {
+      "nome": "Giovanna",
+      "cognome": "Ben Detto",
+      "eta": 42,
+      "cartaIdentita": {
+        "nome": "Giovanna",
+        "cognome": "Ben Detto",
+        "comune": "Frosinone",
+        "nazionalita": "Italia",
+        "sesso": "F",
+        "dataDiNascita": "1970-11-13",
+        "dataEmissione": "1989-06-01",
+        "dataDiScadenza": "2005-01-21",
+        "residenza": "Frosinone",
+        "via": "Vial del grande 5",
+        "professione": "Insegnante scuola elementare",
+        "statura": "media",
+        "altezza": 177,
+        "capelli": "a caschetto",
+        "segniParticolari": "malata di pulito",
+        "numeroDiSerie": "CA038200DE"
+      },
+      "patente": {
+        "nome": "Giovanna",
+        "cognome": "Ben Detto",
+        "dataDiNascita": "1970-11-13",
+        "dataDiRilascio": "1989-06-01",
+        "dataDiScadenza": "1999-06-01",
+        "numeroPatente": "U1H68G400B",
+        "categoria": "B96"
+      }
+    }
+  },
+  {
+    "marca": "BMW",
+    "modello": "955e",
+    "anno":2025,
+    "allestimento": [
+      "base",
+      "advantage",
+      "Msport",
+      "goldEdition"
+    ],
+    "contraente": {
+      "nome": "Giovanna",
+      "cognome": "Ben Detto",
+      "eta": 42,
+      "patente": {
+        "nome": "Giovanna",
+        "cognome": "Ben Detto",
+        "dataDiNascita": "1970-11-13",
+        "dataDiRilascio": "1989-06-01",
+        "dataDiScadenza": "1999-06-01",
+        "numeroPatente": "U1H68G400B",
+        "categoria": "B96"
+      }
+    },
+    "assicurazione": {
+      "inizioContratto": "2022-08-07",
+      "scadenzaContratto": "2023-01-08"
+    }
+  }
+]
